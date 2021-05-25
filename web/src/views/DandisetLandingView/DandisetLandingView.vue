@@ -19,7 +19,7 @@
       />
     </template>
     <template v-else>
-      <v-toolbar class="grey darken-2 white--text">
+      <v-toolbar class="grey darken-3 white--text">
         <v-btn
           icon
           @click="navigateBack"
