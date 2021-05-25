@@ -2,11 +2,14 @@
   <v-text-field
     ref="textField"
     :value="text"
+    dense
+    hide-details="auto"
+    outlined
     readonly
     :success-messages="messages"
     v-bind="$attrs"
   >
-    <template #append-outer>
+    <template #prepend>
       <v-tooltip bottom>
         <template #activator="{ on }">
           <v-icon
@@ -36,7 +39,7 @@ export default {
     },
     iconHoverText: {
       type: String,
-      default: 'Copy text to clipboard',
+      default: 'Copy to clipboard',
     },
   },
   data() {
