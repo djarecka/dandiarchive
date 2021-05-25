@@ -1,60 +1,70 @@
 <template>
   <div>
-    <v-row class="mx-2 my-2">
-      <h1 class="font-weight-regular">
-        {{ meta.name }}
-      </h1>
-    </v-row>
-    <v-card class="pb-2">
-      <v-row
-        class="mx-2"
-        align="center"
+    <h1 class="font-weight-regular">
+      {{ meta.name }}
+    </h1>
+    <v-card class="mt-5">
+      <v-toolbar
+        color="grey darken-3"
+        dark
+        dense
       >
-        <v-col>
-          Get shareable link
+        <v-toolbar-items>
           <v-menu
             offset-y
-            left
             :close-on-content-click="false"
             min-width="500"
             max-width="500"
           >
             <template #activator="{ on }">
-              <v-icon
-                color="primary"
+              <v-btn
+                text
                 v-on="on"
               >
-                mdi-link
-              </v-icon>
+                <v-icon
+                  color="primary"
+                  left
+                >
+                  mdi-share-variant
+                </v-icon>
+                Share
+                <v-icon right>
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
             </template>
-            <v-card>
+            <v-card class="pa-4">
               <CopyText
                 class="mx-2"
                 :text="permalink"
-                icon-hover-text="Copy permalink to clipboard"
               />
             </v-card>
           </v-menu>
-        </v-col>
-        <v-col v-if="this.meta.citation">
-          Cite as
           <v-menu
             offset-y
-            left
             :close-on-content-click="false"
             min-width="500"
             max-width="500"
           >
             <template #activator="{ on }">
-              <v-icon
-                color="primary"
+              <v-btn
+                text
                 v-on="on"
               >
-                mdi-comment-quote-outline
-              </v-icon>
+                <v-icon
+                  color="primary"
+                  left
+                >
+                  mdi-comment-quote
+                </v-icon>
+                Cite as
+                <v-icon right>
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
             </template>
 
-            <v-card>
+            <v-card class="pa-4">
               <CopyText
                 class="mx-2"
                 :text=this.meta.citation
@@ -62,151 +72,158 @@
               />
             </v-card>
           </v-menu>
-        </v-col>
-        <DownloadDialog>
-          <template #activator="{ on }">
-            <v-btn
-              id="download"
-              text
-              v-on="on"
-            >
-              <v-icon
-                color="primary"
-                class="mr-2"
-              >
-                mdi-download
-              </v-icon>
-              Download
-              <v-icon>mdi-menu-down</v-icon>
-            </v-btn>
-          </template>
-        </DownloadDialog>
-        <v-btn
-          id="view-data"
-          :to="fileBrowserLink"
-          text
-        >
-          <v-icon
-            color="primary"
-            class="mr-2"
-          >
-            mdi-file-tree
-          </v-icon>
-          View Data
-        </v-btn>
-        <v-btn
-          id="view-edit-metadata"
-          text
-          @click="$emit('edit')"
-        >
-          <v-icon
-            color="primary"
-            class="mr-2"
-          >
-            {{ metadataButtonIcon }}
-          </v-icon>
-          {{ metadataButtonText }}
-        </v-btn>
-        <template v-if="!DJANGO_API || publishDandiset.version == 'draft'">
-          <v-tooltip
-            left
-            :disabled="editDisabledMessage === null"
-          >
+        </v-toolbar-items>
+        <v-spacer />
+        <v-toolbar-items>
+          <DownloadDialog>
             <template #activator="{ on }">
-              <div v-on="on">
-                <!-- TODO for now only admins can publish -->
-                <v-btn
-                  v-if="DJANGO_API"
-                  id="publish"
-                  text
-                  :disabled="editDisabledMessage !== null || !user || !user.admin"
-                  @click="publish"
+              <v-btn
+                id="download"
+                text
+                v-on="on"
+              >
+                <v-icon
+                  color="primary"
+                  left
                 >
-                  <v-icon
-                    color="success"
-                    class="mr-2"
-                  >
-                    mdi-publish
-                  </v-icon>
-                  Publish
-                </v-btn>
-              </div>
+                  mdi-download
+                </v-icon>
+                Download
+                <v-icon right>
+                  mdi-menu-down
+                </v-icon>
+              </v-btn>
             </template>
-            {{ editDisabledMessage }}
-          </v-tooltip>
-        </template>
-      </v-row>
-
-      <v-divider />
-      <v-row
-        class="mx-2"
-        align="center"
-      >
-        <v-col>
-          <span
-            v-for="author in contributors"
-            :key="author.identifier"
+          </DownloadDialog>
+          <v-btn
+            id="view-data"
+            :to="fileBrowserLink"
+            text
           >
-            <a
-              :href="author.identifier"
-              target="_blank"
+            <v-icon
+              color="primary"
+              left
             >
-              <img
-                alt="ORCID logo"
-                src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
-                width="16"
-                height="16"
-              ></a>
+              mdi-file-tree
+            </v-icon>
+            View Data
+          </v-btn>
+          <v-btn
+            id="view-edit-metadata"
+            text
+            @click="$emit('edit')"
+          >
+            <v-icon
+              color="primary"
+              left
+            >
+              {{ metadataButtonIcon }}
+            </v-icon>
+            {{ metadataButtonText }}
+          </v-btn>
+          <template v-if="!DJANGO_API || publishDandiset.version == 'draft'">
             <v-tooltip
-              v-if="author.affiliation"
-              top
-              color="black"
+              left
+              :disabled="editDisabledMessage === null"
             >
               <template #activator="{ on }">
-                <span v-on="on">
-                  {{ author.name }}
-                </span>
+                <div v-on="on">
+                  <!-- TODO for now only admins can publish -->
+                  <v-btn
+                    v-if="DJANGO_API"
+                    id="publish"
+                    text
+                    :disabled="editDisabledMessage !== null || !user || !user.admin"
+                    @click="publish"
+                  >
+                    <v-icon
+                      color="success"
+                      left
+                    >
+                      mdi-publish
+                    </v-icon>
+                    Publish
+                  </v-btn>
+                </div>
               </template>
-              <span>{{ author.affiliation }}</span>
+              {{ editDisabledMessage }}
             </v-tooltip>
-            <span v-else> {{ author.name }}</span>
-            ;
-          </span>
-        </v-col>
-      </v-row>
-      <v-row :class="titleClasses">
-        <v-card-title class="font-weight-regular">
-          Description
-        </v-card-title>
-      </v-row>
-      <v-row class="mx-1 mb-4 px-4 font-weight-light">
-        {{ meta.description }}
-      </v-row>
-      <template v-for="key in Object.keys(extraFields).sort()">
-        <template v-if="renderData(extraFields[key], schema.properties[key])">
-          <v-divider :key="`${key}-divider`" />
-          <v-row
-            :key="`${key}-title`"
-            :class="titleClasses"
-          >
-            <v-card-title class="font-weight-regular">
-              {{ schema.properties[key].title || key }}
-            </v-card-title>
-          </v-row>
-          <v-row
-            :key="key"
-            class="mx-2 mb-4"
-          >
-            <v-col class="py-0">
-              <ListingComponent
-                :field="key"
-                :schema="schema.properties[key]"
-                :data="extraFields[key]"
-              />
-            </v-col>
-          </v-row>
+          </template>
+        </v-toolbar-items>
+      </v-toolbar>
+
+
+      <v-card class="pb-2">
+        <v-row
+          class="mx-2"
+          align="center"
+        >
+          <v-col>
+            <span
+              v-for="author in contributors"
+              :key="author.identifier"
+            >
+              <a
+                :href="author.identifier"
+                target="_blank"
+              >
+                <img
+                  alt="ORCID logo"
+                  src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
+                  width="16"
+                  height="16"
+                ></a>
+              <v-tooltip
+                v-if="author.affiliation"
+                top
+                color="black"
+              >
+                <template #activator="{ on }">
+                  <span v-on="on">
+                    {{ author.name }}
+                  </span>
+                </template>
+                <span>{{ author.affiliation }}</span>
+              </v-tooltip>
+              <span v-else> {{ author.name }}</span>
+              ;
+            </span>
+          </v-col>
+        </v-row>
+        <v-row :class="titleClasses">
+          <v-card-title class="font-weight-regular">
+            Description
+          </v-card-title>
+        </v-row>
+        <v-row class="mx-1 mb-4 px-4 font-weight-light">
+          {{ meta.description }}
+        </v-row>
+        <template v-for="key in Object.keys(extraFields).sort()">
+          <template v-if="renderData(extraFields[key], schema.properties[key])">
+            <v-divider :key="`${key}-divider`" />
+            <v-row
+              :key="`${key}-title`"
+              :class="titleClasses"
+            >
+              <v-card-title class="font-weight-regular">
+                {{ schema.properties[key].title || key }}
+              </v-card-title>
+            </v-row>
+            <v-row
+              :key="key"
+              class="mx-2 mb-4"
+            >
+              <v-col class="py-0">
+                <ListingComponent
+                  :field="key"
+                  :schema="schema.properties[key]"
+                  :data="extraFields[key]"
+                />
+              </v-col>
+            </v-row>
+          </template>
         </template>
-      </template>
+      </v-card>
     </v-card>
   </div>
 </template>
